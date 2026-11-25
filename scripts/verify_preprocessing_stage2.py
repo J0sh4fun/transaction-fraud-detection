@@ -194,7 +194,7 @@ def build_new_customer_row() -> pd.DataFrame:
 
 def run_verification(input_path: Path | None, report_path: Path) -> dict[str, object]:
     if input_path is not None:
-        df = pd.read_csv(input_path)
+        df = pd.read_csv(input_path, dtype={"transaction_id": str, "entity_id": str})
         source_label = str(input_path).replace("\\", "/")
     else:
         df = build_synthetic_stage2_dataset(seed=SEED)
