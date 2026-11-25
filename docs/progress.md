@@ -6,11 +6,11 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 
 | Mã | Nhiệm vụ | Người làm | Hạn | Liên kết đầu ra | Bằng chứng kiểm tra | Người duyệt | Trạng thái |
 |---|---|---|---|---|---|---|---|
-| 1.1 | Chuẩn hóa một ngày Handbook | TV1 | Ngày 3 | [Hướng dẫn và CSV](handbook-sample.md) | [Đối chiếu số dòng, nhãn và thời điểm](handbook-sample.md#bằng-chứng-đối-chiếu) | TV2 | Chờ duyệt |
-| 1.2 | Xác định 183 ngày Sparkov và xuất ngày mẫu | TV2 | Ngày 3 | [Hướng dẫn và CSV](sparkov-sample.md) | [183 ngày liên tiếp](sparkov-sample.md#chọn-183-ngày), [đối chiếu ngày mẫu](sparkov-sample.md#bằng-chứng-đối-chiếu) | TV1 | Chờ duyệt |
-| 1.3 | Chạy thử ba thuật toán trên dữ liệu nhỏ | TV3 | Ngày 3 | — | — | TV4 | Chưa làm |
-| 1.4 | Lập bảng tiến độ và tạo danh sách cảnh báo theo số tiền | TV4 | Ngày 3 | [Mã xếp hạng và hai CSV cảnh báo](amount-baseline.md) | [Kết quả và truy vết](amount-baseline.md#kết-quả-kiểm-tra) | TV3 | Chờ duyệt |
-| 2.1 | Chuẩn hóa Handbook và tạo đặc trưng A, A+B | TV1 | Ngày 7 | — | — | TV2 | Chưa làm |
+| 1.1 | Chuẩn hóa một ngày Handbook | TV1 | Ngày 3 | [Hướng dẫn và CSV](handbook-sample.md) | [Đối chiếu số dòng, nhãn và thời điểm](handbook-sample.md#bằng-chứng-đối-chiếu) | TV2 | Đạt |
+| 1.2 | Xác định 183 ngày Sparkov và xuất ngày mẫu | TV2 | Ngày 3 | [Hướng dẫn và CSV](sparkov-sample.md) | [183 ngày liên tiếp](sparkov-sample.md#chọn-183-ngày), [đối chiếu ngày mẫu](sparkov-sample.md#bằng-chứng-đối-chiếu) | TV1 | Đạt |
+| 1.3 | Chạy thử ba thuật toán trên dữ liệu nhỏ | TV3 | Ngày 3 | [Hướng dẫn chạy, mã nguồn và bảng điểm mẫu](ml-stage-1.md) | [Kiểm tra số lượng và tính hữu hạn của điểm](ml-stage-1.md#bằng-chứng-kiểm-tra-3-mô-hình-trên-tập-eval-60-dòng), [kiểm tra chiều điểm Isolation Forest](ml-stage-1.md#bằng-chứng-kiểm-tra-chiều-điểm-isolation-forest) | TV4 | Đạt |
+| 1.4 | Lập bảng tiến độ và tạo danh sách cảnh báo theo số tiền | TV4 | Ngày 3 | [Mã xếp hạng và hai CSV cảnh báo](amount-baseline.md) | [Kết quả và truy vết](amount-baseline.md#kết-quả-kiểm-tra) | TV3 | Đạt |
+| 2.1 | Chuẩn hóa Handbook và tạo đặc trưng A, A+B | TV1 | Ngày 7 | [Bảng 183 ngày, mã và từ điển đặc trưng](handbook-stage-2.md) | [Đối chiếu ví dụ tính tay và kiểm tra rò rỉ thời gian](handbook-stage-2.md#kết-quả-kiểm-tra) | TV2 | Chờ duyệt |
 | 2.2 | Chuẩn hóa Sparkov, kiểm tra dữ liệu và tạo đặc trưng | TV2 | Ngày 7 | — | — | TV1 | Chưa làm |
 | 2.3 | Xây quy trình tiền xử lý cho từng mô hình | TV3 | Ngày 7 | — | — | TV4 | Chưa làm |
 | 2.4 | Tính và kiểm tra các chỉ số đánh giá theo ngày | TV4 | Ngày 7 | — | — | TV3 | Chưa làm |
