@@ -11,7 +11,7 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 1.3 | Chạy thử ba thuật toán trên dữ liệu nhỏ | TV3 | Ngày 3 | [Hướng dẫn chạy, mã nguồn và bảng điểm mẫu](ml-stage-1.md) | [Kiểm tra số lượng và tính hữu hạn của điểm](ml-stage-1.md#bằng-chứng-kiểm-tra-3-mô-hình-trên-tập-eval-60-dòng), [kiểm tra chiều điểm Isolation Forest](ml-stage-1.md#bằng-chứng-kiểm-tra-chiều-điểm-isolation-forest) | TV4 | Đạt |
 | 1.4 | Lập bảng tiến độ và tạo danh sách cảnh báo theo số tiền | TV4 | Ngày 3 | [Mã xếp hạng và hai CSV cảnh báo](amount-baseline.md) | [Kết quả và truy vết](amount-baseline.md#kết-quả-kiểm-tra) | TV3 | Đạt |
 | 2.1 | Chuẩn hóa Handbook và tạo đặc trưng A, A+B | TV1 | Ngày 7 | [Bảng 183 ngày, mã và từ điển đặc trưng](handbook-stage-2.md) | [Đối chiếu độc lập của TV2](handbook-stage-2.md#đối-chiếu-độc-lập-của-tv2) | TV2 | Đạt |
-| 2.2 | Chuẩn hóa Sparkov, kiểm tra dữ liệu và tạo đặc trưng | TV2 | Ngày 7 | [Bảng 183 ngày, thống kê theo ngày và mã](sparkov-stage-2.md) | [Đối chiếu nguồn, ngày chia tập và lịch sử thẻ](sparkov-stage-2.md#kết-quả-kiểm-tra) | TV1 | Chờ duyệt |
+| 2.2 | Chuẩn hóa Sparkov, kiểm tra dữ liệu và tạo đặc trưng | TV2 | Ngày 7 | [Bảng 183 ngày, thống kê theo ngày và mã](sparkov-stage-2.md) | [Đối chiếu độc lập với dữ liệu gốc và lịch sử thẻ](sparkov-stage-2.md#đối-chiếu-độc-lập-sparkov) | TV1 | Đạt |
 | 2.3 | Xây quy trình tiền xử lý cho từng mô hình | TV3 | Ngày 7 | — | — | TV4 | Chưa làm |
 | 2.4 | Tính và kiểm tra các chỉ số đánh giá theo ngày | TV4 | Ngày 7 | — | — | TV3 | Chưa làm |
 | 3.1 | Kiểm tra đặc trưng lịch sử trên Handbook | TV1 | Ngày 11 | — | — | TV2 | Chưa làm |

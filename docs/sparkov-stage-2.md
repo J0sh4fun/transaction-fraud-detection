@@ -58,3 +58,9 @@ Hai giao dịch dưới đây được đối chiếu trực tiếp theo mã th�
 |---|---|---|---:|
 | `validation` | `d1da7bbca6e613f7484265bd21487ea1` | `9968ab0247ec20e11f26afb61949c40d` | 25.928 |
 | `test` | `8ad757e967d98422c5bd3bb40015fd42` | `591771e99963c8003727c89c354ab23e` | 112.681 |
+
+### Đối chiếu độc lập Sparkov
+
+- Đọc lại hai CSV trong ZIP gốc đã đối chiếu SHA-256 với Chặng 1. Cả 405.254 mã giao dịch là duy nhất và khớp với nguồn về thời điểm, mã thẻ, số tiền và nhãn.
+- Cả 183 ngày đều có giao dịch và thuộc đúng một trong ba tập 90/30/63 ngày theo lịch Chặng 1. Mẫu ngày đầu và toàn bộ 183 dòng thống kê theo ngày đều khớp.
+- Giữ mã thẻ dưới dạng chuỗi trong toàn bộ phép đối chiếu. Trong 936 thẻ, 908 thẻ xuất hiện ở cả ba tập. Tính lại khoảng cách đến thời điểm liền trước theo mã thẻ cho toàn bộ giao dịch và thu được kết quả khớp với hàm A+B, gồm 25.928 giây qua ranh giới train/validation và 112.681 giây qua ranh giới validation/test.
