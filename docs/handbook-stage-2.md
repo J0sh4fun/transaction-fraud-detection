@@ -74,3 +74,16 @@ Các cột kết quả dưới đây lần lượt là số giao dịch trong 1 
 Phép kiểm tra thêm một giao dịch ngày 31/07 với số tiền 1.000.000 xác nhận mọi đặc trưng của các dòng trước đó giữ nguyên. Năm cột A cũng khớp khi tính riêng và khi tính cùng B.
 
 Bảng bàn giao có đủ 183 ngày liên tiếp, mã giao dịch duy nhất và toàn bộ giao dịch ngày 01/04 khớp mẫu đã duyệt ở Chặng 1. Hàm A+B chạy thành công trên toàn bộ 1.754.155 giao dịch Handbook và 1.118 giao dịch mẫu Sparkov, trả về 10 cột đặc trưng cho mỗi giao dịch.
+
+### Đối chiếu độc lập của TV2
+
+Tính lại năm cột B từ bảng Handbook theo mã khách hàng, chỉ dùng các giao dịch có thời điểm nhỏ hơn thời điểm đang xét. Kết quả khớp với hàm chung. Tỷ lệ so với trung vị trong bảng dưới được làm tròn đến sáu chữ số thập phân.
+
+| Ca kiểm tra | Mã giao dịch | Số giao dịch 1 giờ | Số giao dịch 24 giờ | Số giây từ giao dịch trước | Tỷ lệ so với trung vị 7 ngày | Thiếu lịch sử |
+|---|---|---:|---:|---:|---:|---:|
+| Khách hàng mới | `0` | 0 | 0 | NaN | NaN | 1 |
+| Hai giao dịch cùng thời điểm | `97797` | 0 | 4 | 11.615 | 1,656229 | 0 |
+| Hai giao dịch cùng thời điểm | `97798` | 0 | 4 | 11.615 | 1,940706 | 0 |
+| Giao dịch đầu tiên của validation | `863006` | 0 | 3 | 11.533 | 1,600320 | 0 |
+
+Thêm một giao dịch tương lai có số tiền 1.000.000 của một trong các khách hàng được đối chiếu. Cả 10 đặc trưng của 2.076 giao dịch trước đó thuộc các khách hàng được kiểm tra đều giữ nguyên.
