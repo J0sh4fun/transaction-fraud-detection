@@ -20,7 +20,7 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 3.4 | Đánh giá validation và chọn 12 cấu hình | TV4 | Ngày 11 | [Bảng điểm validation và 12 cấu hình chọn](evaluation-stage-3.md) | [Kết quả K = 50, ứng viên còn lại và quy tắc xử lý hòa](evaluation-stage-3.md#kết-quả-ở-k--50) | TV3 | Đạt |
 | 4.1 | Kiểm tra độc lập dữ liệu và đặc trưng Sparkov | TV1 | Ngày 14 | [Phiếu kiểm tra và lệnh chạy lại](sparkov-stage-4.md) | [Hai ranh giới chia tập](sparkov-stage-4.md#đối-chiếu-hai-ranh-giới), [kiểm tra rò rỉ thời gian](sparkov-stage-4.md#kiểm-tra-rò-rỉ-thời-gian) | TV2 | Đạt |
 | 4.2 | Kiểm tra độc lập dữ liệu và đặc trưng Handbook | TV2 | Ngày 14 | [Phiếu kiểm tra, danh sách cột và lệnh chạy lại](handbook-stage-4.md) | [Đối chiếu nguồn và nhãn](handbook-stage-4.md#đối-chiếu-dữ-liệu), [đầu vào mô hình](handbook-stage-4.md#các-cột-đi-vào-mô-hình) | TV1 | Chờ duyệt |
-| 4.3 | Chuẩn bị lệnh huấn luyện lại và chấm test | TV3 | Ngày 14 | — | — | TV4 | Chưa làm |
+| 4.3 | Chuẩn bị lệnh huấn luyện lại và chấm test | TV3 | Ngày 14 | [Cấu hình khóa, lệnh chạy và nhật ký chạy thử](ml-stage-4.md) | [Kiểm tra khóa 12 tham số và chạy thử 113→7 ngày](ml-stage-4.md#nhật-ký-chạy-thử-dry-run-113-ngày--7-ngày) | TV4 | Chờ duyệt |
 | 4.4 | Chốt quy trình đánh giá và mẫu bảng 14 dòng | TV4 | Ngày 14 | — | — | TV3 | Chưa làm |
 | 5.1 | Phân tích kết quả và ca điển hình trên Handbook | TV1 | Ngày 17 | — | — | TV2 | Chưa làm |
 | 5.2 | Phân tích kết quả Sparkov và đối chiếu hai nguồn | TV2 | Ngày 17 | — | — | TV1 | Chưa làm |

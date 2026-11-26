@@ -1,0 +1,154 @@
+{
+  "schema_version": "1.0",
+  "stage": "4.3",
+  "locked_from": "data/selected_configurations_stage3.csv",
+  "base_git_commit": "687b2a8",
+  "seed": 42,
+  "window_policy": {
+    "final_train_splits": [
+      "train",
+      "validation"
+    ],
+    "final_train_days": 120,
+    "final_score_split": "test",
+    "final_score_days": 63,
+    "dry_run_allowed_splits": [
+      "train",
+      "validation"
+    ],
+    "dry_run_train_days": 113,
+    "dry_run_score_days": 7
+  },
+  "datasets": {
+    "handbook": {
+      "path": "data/handbook_183_days.csv.gz",
+      "sha256": "a529dc8007fa01451da7088fbd7272aa9405c32b7adf45efa69ca0bebaddbcb6"
+    },
+    "sparkov": {
+      "path": "data/sparkov_183_days.csv.gz",
+      "sha256": "b7eaabf5c72009d579a942705b62434a658b82c1bf6d75a1fe4ffb57a1895031"
+    }
+  },
+  "models": [
+    {
+      "dataset": "handbook",
+      "algorithm": "hist_gradient_boosting",
+      "feature_set": "A",
+      "config": "max_leaf_nodes=15",
+      "parameter_name": "max_leaf_nodes",
+      "parameter_value": 15,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "handbook",
+      "algorithm": "hist_gradient_boosting",
+      "feature_set": "A+B",
+      "config": "max_leaf_nodes=15",
+      "parameter_name": "max_leaf_nodes",
+      "parameter_value": 15,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "handbook",
+      "algorithm": "isolation_forest",
+      "feature_set": "A",
+      "config": "max_samples=1024",
+      "parameter_name": "max_samples",
+      "parameter_value": 1024,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "handbook",
+      "algorithm": "isolation_forest",
+      "feature_set": "A+B",
+      "config": "max_samples=1024",
+      "parameter_name": "max_samples",
+      "parameter_value": 1024,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "handbook",
+      "algorithm": "logistic_regression",
+      "feature_set": "A",
+      "config": "C=0.1",
+      "parameter_name": "C",
+      "parameter_value": 0.1,
+      "seed": 42,
+      "selection_reason": "tie_smaller_parameter"
+    },
+    {
+      "dataset": "handbook",
+      "algorithm": "logistic_regression",
+      "feature_set": "A+B",
+      "config": "C=1",
+      "parameter_name": "C",
+      "parameter_value": 1.0,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "sparkov",
+      "algorithm": "hist_gradient_boosting",
+      "feature_set": "A",
+      "config": "max_leaf_nodes=15",
+      "parameter_name": "max_leaf_nodes",
+      "parameter_value": 15,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "sparkov",
+      "algorithm": "hist_gradient_boosting",
+      "feature_set": "A+B",
+      "config": "max_leaf_nodes=15",
+      "parameter_name": "max_leaf_nodes",
+      "parameter_value": 15,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "sparkov",
+      "algorithm": "isolation_forest",
+      "feature_set": "A",
+      "config": "max_samples=1024",
+      "parameter_name": "max_samples",
+      "parameter_value": 1024,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "sparkov",
+      "algorithm": "isolation_forest",
+      "feature_set": "A+B",
+      "config": "max_samples=256",
+      "parameter_name": "max_samples",
+      "parameter_value": 256,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    },
+    {
+      "dataset": "sparkov",
+      "algorithm": "logistic_regression",
+      "feature_set": "A",
+      "config": "C=0.1",
+      "parameter_name": "C",
+      "parameter_value": 0.1,
+      "seed": 42,
+      "selection_reason": "tie_smaller_parameter"
+    },
+    {
+      "dataset": "sparkov",
+      "algorithm": "logistic_regression",
+      "feature_set": "A+B",
+      "config": "C=1",
+      "parameter_name": "C",
+      "parameter_value": 1.0,
+      "seed": 42,
+      "selection_reason": "higher_fraud_found_per_day"
+    }
+  ]
+}
