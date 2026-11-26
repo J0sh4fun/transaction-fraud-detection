@@ -17,7 +17,7 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 3.1 | Kiểm tra đặc trưng lịch sử trên Handbook | TV1 | Ngày 11 | [Phân bố train/validation và lịch sử giao dịch](handbook-stage-3.md) | [Đối chiếu độc lập của TV2](handbook-stage-3.md#đối-chiếu-độc-lập-của-tv2) | TV2 | Đạt |
 | 3.2 | Phân tích Sparkov và so sánh hai nguồn | TV2 | Ngày 11 | [Bảng so sánh, báo cáo và hướng dẫn chạy lại](tv2-stage-3.md) | [Đối chiếu độc lập 240 dòng thống kê](tv2-stage-3.md#đối-chiếu-độc-lập) | TV1 | Đạt |
 | 3.3 | Chạy 24 ứng viên và xuất điểm validation | TV3 | Ngày 11 | [Nhật ký 24 lượt chạy, mã và 24 bảng điểm validation](ml-stage-3.md) | [Tóm tắt 24 lượt chạy và kiểm tra tương thích script TV4](ml-stage-3.md#tóm-tắt-nhật-ký-24-lượt-chạy) | TV4 | Chờ duyệt |
-| 3.4 | Đánh giá validation và chọn 12 cấu hình | TV4 | Ngày 11 | — | — | TV3 | Chưa làm |
+| 3.4 | Đánh giá validation và chọn 12 cấu hình | TV4 | Ngày 11 | [Bảng điểm validation và 12 cấu hình chọn](evaluation-stage-3.md) | [Kết quả K = 50, ứng viên còn lại và quy tắc xử lý hòa](evaluation-stage-3.md#kết-quả-ở-k--50) | TV3 | Chờ duyệt |
 | 4.1 | Kiểm tra độc lập dữ liệu và đặc trưng Sparkov | TV1 | Ngày 14 | — | — | TV2 | Chưa làm |
 | 4.2 | Kiểm tra độc lập dữ liệu và đặc trưng Handbook | TV2 | Ngày 14 | — | — | TV1 | Chưa làm |
 | 4.3 | Chuẩn bị lệnh huấn luyện lại và chấm test | TV3 | Ngày 14 | — | — | TV4 | Chưa làm |
