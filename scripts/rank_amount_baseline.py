@@ -9,11 +9,19 @@ from pathlib import Path
 OUTPUT_COLUMNS = ("dataset", "date", "transaction_id", "amount", "rank", "label")
 
 
-def amount_rank_key(row):
+def transaction_rank_key(row, score_column):
     transaction_id = row["transaction_id"]
     if row["dataset"] == "handbook":
         transaction_id = int(transaction_id)
-    return -Decimal(row["amount"]), transaction_id
+    return -Decimal(row[score_column]), transaction_id
+
+
+def amount_rank_key(row):
+    return transaction_rank_key(row, "amount")
+
+
+def transaction_day(row):
+    return datetime.fromisoformat(row["timestamp"]).date().isoformat()
 
 
 def top_alerts_by_day(transactions, k=50):
@@ -22,7 +30,7 @@ def top_alerts_by_day(transactions, k=50):
 
     by_day = defaultdict(list)
     for row in transactions:
-        day = datetime.fromisoformat(row["timestamp"]).date().isoformat()
+        day = transaction_day(row)
         by_day[row["dataset"], day].append(row)
 
     for (dataset, day), rows in sorted(by_day.items()):
