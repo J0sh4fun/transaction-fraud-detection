@@ -1,8 +1,8 @@
 """Stage 2.3 (TV3): Feature definitions, leakage guards, and model-specific preprocessing.
 
-Defines Feature Sets A and A+B per PLAN.md, enforces strict exclusion of labels,
-identifiers, timestamps, and fraud-scenario columns, and builds model-specific
-scikit-learn preprocessing pipelines that fit parameters exclusively on training data.
+Aligns directly with scripts/transaction_features.py (FEATURES_A, FEATURES_B), enforces
+strict exclusion of labels, identifiers, timestamps, splits, and fraud-scenario columns,
+and builds model-specific scikit-learn preprocessing pipelines fit strictly on train data.
 """
 
 from __future__ import annotations
@@ -24,7 +24,7 @@ ALGORITHMS = (
     "hist_gradient_boosting",
 )
 
-# Feature Set A: log amount + cyclic hour and day-of-week
+# Feature Set A: matches scripts/transaction_features.py FEATURES_A
 FEATURE_SET_A: tuple[str, ...] = (
     "log_amount",
     "hour_sin",
@@ -33,13 +33,13 @@ FEATURE_SET_A: tuple[str, ...] = (
     "dow_cos",
 )
 
-# Additional history features for Feature Set A+B
+# Feature Set B extra: matches scripts/transaction_features.py FEATURES_B
 FEATURE_SET_B_EXTRA: tuple[str, ...] = (
-    "tx_count_1h",
-    "tx_count_24h",
-    "time_since_last_tx",
-    "amount_to_7d_median",
-    "missing_history_flag",
+    "count_1h",
+    "count_24h",
+    "seconds_since_previous",
+    "amount_to_median_7d",
+    "missing_history",
 )
 
 FEATURE_SET_AB: tuple[str, ...] = FEATURE_SET_A + FEATURE_SET_B_EXTRA
@@ -49,7 +49,7 @@ FEATURE_SETS: dict[str, tuple[str, ...]] = {
     "A+B": FEATURE_SET_AB,
 }
 
-BINARY_FLAG_COLUMNS: frozenset[str] = frozenset({"missing_history_flag"})
+BINARY_FLAG_COLUMNS: frozenset[str] = frozenset({"missing_history"})
 
 # Columns that must NEVER enter model features (checked case-insensitively)
 FORBIDDEN_COLUMNS: frozenset[str] = frozenset(
@@ -137,13 +137,13 @@ def build_preprocessor(
 
     - logistic_regression:
         continuous -> median imputation + StandardScaler
-        missing_history_flag -> constant(1.0) imputation (kept unscaled 0/1)
+        missing_history -> constant(1.0) imputation (kept unscaled 0/1)
     - isolation_forest:
         continuous -> median imputation (tree-based, scale-invariant)
-        missing_history_flag -> constant(1.0) imputation
+        missing_history -> constant(1.0) imputation
     - hist_gradient_boosting:
         continuous -> float64 passthrough (native NaN handling in HGB)
-        missing_history_flag -> constant(1.0) imputation
+        missing_history -> constant(1.0) imputation
     """
     if algorithm not in ALGORITHMS:
         raise ValueError(f"Unknown algorithm {algorithm!r}. Expected one of {ALGORITHMS}.")

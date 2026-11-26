@@ -1,13 +1,15 @@
 """Stage 2.3 (TV3): Verification script for feature selection & model-specific preprocessing.
 
-Runs on either a real feature-engineered CSV (--input) or a deterministic synthetic 183-day
-dataset (90 train / 30 validation / 63 test) containing realistic missing history and
-deliberate non-feature columns (label, transaction_id, entity_id, TX_FRAUD_SCENARIO) to
-verify all Stage 2.3 acceptance criteria:
-  1. Fit-on-train-only guarantee (mutating val/test does not change fitted imputer/scaler).
-  2. Strict exclusion of labels, IDs, timestamps, and fraud-scenario columns.
-  3. Cold-start (brand-new customer with missing history) produces finite risk_score.
-  4. Input dimensions and missing-value counts before/after preprocessing across all splits.
+Runs directly on the official 183-day normalized datasets from Stage 2.1 (Handbook) and
+Stage 2.2 (Sparkov) using scripts/transaction_features.py::build_features to verify all
+Stage 2.3 acceptance criteria without touching test-set performance metrics:
+  1. Feature lists A and A+B match scripts/transaction_features.py (FEATURES_A, FEATURES_B).
+  2. Strict exclusion of labels, IDs, timestamps, splits, and fraud-scenario columns.
+  3. Fit-on-train-only guarantee (mutating validation does not change fitted imputer/scaler).
+  4. Cold-start (brand-new customer with missing history) produces finite risk_score across
+     all 6 (algorithm x feature_set) pipelines on both datasets.
+  5. Input dimensions and missing-value counts before/after preprocessing for train,
+     validation, and test splits on both Handbook and Sparkov.
 """
 
 from __future__ import annotations
@@ -24,8 +26,11 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
+from scripts.transaction_features import FEATURES_A, FEATURES_B, build_features  # noqa: E402
 from src.ml.preprocessing import (  # noqa: E402
     ALGORITHMS,
+    FEATURE_SET_A,
+    FEATURE_SET_B_EXTRA,
     FEATURE_SETS,
     build_model_pipeline,
     build_preprocessor,
@@ -36,93 +41,32 @@ from src.ml.preprocessing import (  # noqa: E402
 )
 
 SEED = 42
+DEFAULT_DATASETS: dict[str, Path] = {
+    "handbook": Path("data/handbook_183_days.csv.gz"),
+    "sparkov": Path("data/sparkov_183_days.csv.gz"),
+}
 DEFAULT_REPORT = Path("data/samples/ml_stage2_preprocessing_report.csv")
 
 
-def build_synthetic_stage2_dataset(seed: int = SEED) -> pd.DataFrame:
-    """Create a deterministic 183-day dataset (90 train / 30 val / 63 test) with A and A+B features."""
-    rng = np.random.default_rng(seed)
-    rows_per_day = 12
-    total_days = 183
-    n_rows = rows_per_day * total_days
-
-    base_date = pd.Timestamp("2018-04-01")
-    day_indices = np.repeat(np.arange(total_days), rows_per_day)
-    seconds_in_day = rng.integers(0, 86400, size=n_rows)
-    timestamps = [
-        base_date + pd.Timedelta(days=int(d), seconds=int(s))
-        for d, s in zip(day_indices, seconds_in_day)
-    ]
-
-    splits = np.where(day_indices < 90, "train", np.where(day_indices < 120, "val", "test"))
-
-    # Assign 2.5% fraud across all splits
-    labels = (rng.random(n_rows) < 0.025).astype(int)
-    # Guarantee at least 5 fraud rows in each split
-    for sp in ("train", "val", "test"):
-        sp_idx = np.where(splits == sp)[0]
-        if labels[sp_idx].sum() < 5:
-            labels[sp_idx[:5]] = 1
-
-    amounts = np.where(
-        labels == 1,
-        rng.lognormal(mean=5.8, sigma=0.45, size=n_rows),
-        rng.lognormal(mean=3.5, sigma=0.55, size=n_rows),
-    )
-    amounts = np.round(amounts, 2)
-
-    # Deliberately introduce ~12% brand-new customers (missing history)
-    missing_hist = (rng.random(n_rows) < 0.12).astype(int)
-    tx_count_1h = np.where(missing_hist == 1, 0, rng.poisson(lam=0.6, size=n_rows))
-    tx_count_24h = np.where(missing_hist == 1, 0, tx_count_1h + rng.poisson(lam=2.2, size=n_rows))
-    time_since_last_tx = np.where(
-        missing_hist == 1,
-        np.nan,
-        np.round(rng.exponential(scale=18.0, size=n_rows), 4),
-    )
-    amount_to_7d_median = np.where(
-        missing_hist == 1,
-        np.nan,
-        np.round(np.where(labels == 1, rng.uniform(2.0, 6.0, n_rows), rng.uniform(0.4, 1.8, n_rows)), 4),
-    )
-
-    ts_series = pd.Series(pd.to_datetime(timestamps))
-    hour = ts_series.dt.hour + ts_series.dt.minute / 60.0
-    dow = ts_series.dt.dayofweek
-
-    df = pd.DataFrame(
-        {
-            "dataset": "synthetic_stage2",
-            "transaction_id": [f"TX_{i:06d}" for i in range(1, n_rows + 1)],
-            "timestamp": ts_series,
-            "date": ts_series.dt.strftime("%Y-%m-%d"),
-            "split": splits,
-            "entity_id": [f"ENT_{int(e):04d}" for e in rng.integers(1, 301, size=n_rows)],
-            "amount": amounts,
-            "label": labels,
-            # Deliberate non-feature / leakage columns to verify exclusion
-            "TX_FRAUD_SCENARIO": np.where(labels == 1, rng.integers(1, 4, size=n_rows), 0),
-            "TERMINAL_ID": [f"TERM_{int(t):04d}" for t in rng.integers(1, 101, size=n_rows)],
-            # Feature Set A
-            "log_amount": np.log1p(amounts),
-            "hour_sin": np.sin(2.0 * np.pi * hour / 24.0),
-            "hour_cos": np.cos(2.0 * np.pi * hour / 24.0),
-            "dow_sin": np.sin(2.0 * np.pi * dow / 7.0),
-            "dow_cos": np.cos(2.0 * np.pi * dow / 7.0),
-            # Feature Set B extra
-            "tx_count_1h": tx_count_1h,
-            "tx_count_24h": tx_count_24h,
-            "time_since_last_tx": time_since_last_tx,
-            "amount_to_7d_median": amount_to_7d_median,
-            "missing_history_flag": missing_hist,
-        }
-    )
-    return df
+def verify_feature_dictionary_alignment() -> dict[str, bool]:
+    """Confirm src/ml/preprocessing.py matches scripts/transaction_features.py exactly."""
+    assert FEATURE_SET_A == FEATURES_A, f"Mismatch in FEATURES_A: {FEATURE_SET_A} vs {FEATURES_A}"
+    assert FEATURE_SET_B_EXTRA == FEATURES_B, f"Mismatch in FEATURES_B: {FEATURE_SET_B_EXTRA} vs {FEATURES_B}"
+    return {"matches_transaction_features_py": True}
 
 
 def verify_forbidden_columns_blocked() -> dict[str, bool]:
     """Confirm forbidden columns are rejected by validate_feature_columns."""
-    blocked_samples = ["label", "transaction_id", "entity_id", "TX_FRAUD_SCENARIO", "fraud_scenario"]
+    blocked_samples = [
+        "label",
+        "transaction_id",
+        "entity_id",
+        "timestamp",
+        "dataset",
+        "split",
+        "TX_FRAUD_SCENARIO",
+        "fraud_scenario",
+    ]
     for col in blocked_samples:
         try:
             validate_feature_columns(["log_amount", col])
@@ -132,17 +76,17 @@ def verify_forbidden_columns_blocked() -> dict[str, bool]:
     return {"all_forbidden_samples_rejected": True}
 
 
-def verify_train_only_fitting(train_df: pd.DataFrame, val_df: pd.DataFrame) -> dict[str, bool]:
-    """Verify fitted preprocessor parameters depend strictly on train_df, never val/test."""
+def verify_train_only_fitting(train_features: pd.DataFrame, val_features: pd.DataFrame) -> dict[str, bool]:
+    """Verify fitted preprocessor parameters depend strictly on train split, never validation/test."""
     for algo in ("logistic_regression", "isolation_forest"):
         prep_a = build_preprocessor(algo, "A+B")
         prep_b = build_preprocessor(algo, "A+B")
 
-        X_train = select_feature_frame(train_df, "A+B")
-        X_val_orig = select_feature_frame(val_df, "A+B")
+        X_train = select_feature_frame(train_features, "A+B")
+        X_val_orig = select_feature_frame(val_features, "A+B")
         X_val_poisoned = X_val_orig.copy()
         X_val_poisoned["log_amount"] = 1e9
-        X_val_poisoned["time_since_last_tx"] = 1e9
+        X_val_poisoned["seconds_since_previous"] = 1e9
 
         prep_a.fit(X_train)
         _ = prep_a.transform(X_val_orig)
@@ -163,62 +107,60 @@ def verify_train_only_fitting(train_df: pd.DataFrame, val_df: pd.DataFrame) -> d
     return {"train_only_fit_verified": True}
 
 
-def build_new_customer_row() -> pd.DataFrame:
-    """Single brand-new customer transaction with missing history."""
-    return pd.DataFrame(
+def build_new_customer_feature_row(dataset_name: str) -> pd.DataFrame:
+    """Single brand-new customer/card transaction with no prior history."""
+    tx = pd.DataFrame(
         [
             {
-                "dataset": "synthetic_stage2",
-                "transaction_id": "TX_NEW_CUSTOMER_001",
-                "timestamp": pd.Timestamp("2018-09-15 14:30:00"),
-                "date": "2018-09-15",
-                "split": "test",
-                "entity_id": "ENT_BRAND_NEW",
+                "dataset": dataset_name,
+                "transaction_id": f"{dataset_name}_NEW_CUSTOMER_001",
+                "timestamp": "2019-06-15 14:30:00",
+                "entity_id": "BRAND_NEW_ENTITY_001",
                 "amount": 125.50,
                 "label": 0,
-                "TX_FRAUD_SCENARIO": 0,
-                "log_amount": float(np.log1p(125.50)),
-                "hour_sin": float(np.sin(2.0 * np.pi * 14.5 / 24.0)),
-                "hour_cos": float(np.cos(2.0 * np.pi * 14.5 / 24.0)),
-                "dow_sin": float(np.sin(2.0 * np.pi * 5 / 7.0)),
-                "dow_cos": float(np.cos(2.0 * np.pi * 5 / 7.0)),
-                "tx_count_1h": 0,
-                "tx_count_24h": 0,
-                "time_since_last_tx": np.nan,
-                "amount_to_7d_median": np.nan,
-                "missing_history_flag": 1,
+                "split": "validation",
             }
         ]
     )
+    feats = build_features(tx, feature_set="A+B")
+    assert int(feats["missing_history"].iloc[0]) == 1
+    assert pd.isna(feats["seconds_since_previous"].iloc[0])
+    assert pd.isna(feats["amount_to_median_7d"].iloc[0])
+    return feats
 
 
-def run_verification(input_path: Path | None, report_path: Path) -> dict[str, object]:
-    if input_path is not None:
-        df = pd.read_csv(input_path, dtype={"transaction_id": str, "entity_id": str})
-        source_label = str(input_path).replace("\\", "/")
-    else:
-        df = build_synthetic_stage2_dataset(seed=SEED)
-        source_label = "synthetic_183d_90_30_63"
+def verify_dataset(dataset_name: str, csv_path: Path) -> tuple[list[dict[str, object]], dict[str, object]]:
+    """Run all Stage 2.3 preprocessing checks on one official 183-day dataset."""
+    transactions = pd.read_csv(
+        csv_path,
+        dtype={"transaction_id": "string", "entity_id": "string"},
+    )
+    features_ab = build_features(transactions, feature_set="A+B")
 
-    train_df = df[df["split"] == "train"].reset_index(drop=True)
-    val_df = df[df["split"] == "val"].reset_index(drop=True)
-    test_df = df[df["split"] == "test"].reset_index(drop=True)
+    # Verify non-feature columns from transactions never enter features_ab
+    validate_feature_columns(list(features_ab.columns))
 
-    assert len(train_df) > 0 and len(val_df) > 0 and len(test_df) > 0, (
-        "Dataset must contain non-empty train, val, and test splits."
+    train_mask = transactions["split"].eq("train")
+    val_mask = transactions["split"].eq("validation")
+    test_mask = transactions["split"].eq("test")
+    assert int(train_mask.sum()) > 0 and int(val_mask.sum()) > 0 and int(test_mask.sum()) > 0, (
+        f"{dataset_name}: expected non-empty train, validation, and test splits."
     )
 
-    forbidden_check = verify_forbidden_columns_blocked()
-    leakage_check = verify_train_only_fitting(train_df, val_df)
-    new_customer_df = build_new_customer_row()
+    train_feats = features_ab.loc[train_mask]
+    val_feats = features_ab.loc[val_mask]
+    test_feats = features_ab.loc[test_mask]
+    y_train = transactions.loc[train_mask, "label"].to_numpy()
+
+    train_only_check = verify_train_only_fitting(train_feats, val_feats)
+    new_customer_feats = build_new_customer_feature_row(dataset_name)
 
     report_rows: list[dict[str, object]] = []
     cold_start_scores: dict[str, float] = {}
 
     for feature_set in FEATURE_SETS:
         expected_cols = get_feature_columns(feature_set)
-        X_train = select_feature_frame(train_df, feature_set)
-        y_train = train_df["label"].to_numpy()
+        X_train = select_feature_frame(train_feats, feature_set)
         assert list(X_train.columns) == expected_cols
 
         for algo in ALGORITHMS:
@@ -228,23 +170,34 @@ def run_verification(input_path: Path | None, report_path: Path) -> dict[str, ob
             else:
                 pipe.fit(X_train, y_train)
 
-            # Cold-start check for brand-new customer
-            nc_score = float(score_model(pipe, algo, new_customer_df, feature_set)[0])
+            # Brand-new customer (cold-start) must receive a finite risk_score
+            nc_score = float(score_model(pipe, algo, new_customer_feats, feature_set)[0])
             cold_start_scores[f"{algo}__{feature_set}"] = round(nc_score, 6)
 
+            # Also verify validation scores are all finite (test labels/metrics remain locked!)
+            val_scores = score_model(pipe, algo, val_feats, feature_set)
+            assert np.isfinite(val_scores).all(), f"{dataset_name}/{algo}/{feature_set}: non-finite val scores"
+
             preprocessor = pipe.named_steps["preprocess"]
-            for split_name, split_df in (("train", train_df), ("val", val_df), ("test", test_df)):
-                X_raw = select_feature_frame(split_df, feature_set)
+            for split_name, split_feats in (
+                ("train", train_feats),
+                ("validation", val_feats),
+                ("test", test_feats),
+            ):
+                X_raw = select_feature_frame(split_feats, feature_set)
                 X_proc = preprocessor.transform(X_raw)
-                scores = score_model(pipe, algo, split_df, feature_set)
 
                 missing_before = int(X_raw.isna().sum().sum())
                 missing_after = int(np.isnan(X_proc).sum())
+                has_inf_after = bool(np.isinf(X_proc).any())
+                assert not has_inf_after, f"{dataset_name}/{algo}/{feature_set}/{split_name}: inf detected!"
+
                 if algo in ("logistic_regression", "isolation_forest"):
-                    assert missing_after == 0, f"{algo} ({feature_set}, {split_name}) left NaNs!"
+                    assert missing_after == 0, f"{dataset_name}/{algo}/{feature_set}/{split_name}: NaNs left!"
 
                 report_rows.append(
                     {
+                        "dataset": dataset_name,
                         "algorithm": algo,
                         "feature_set": feature_set,
                         "split": split_name,
@@ -253,25 +206,44 @@ def run_verification(input_path: Path | None, report_path: Path) -> dict[str, ob
                         "n_features_out": int(X_proc.shape[1]),
                         "missing_before": missing_before,
                         "missing_after": missing_after,
-                        "all_scores_finite": bool(np.isfinite(scores).all()),
+                        "no_inf_after": not has_inf_after,
                     }
                 )
 
-    report_df = pd.DataFrame(report_rows)
+    dataset_summary = {
+        "source": str(csv_path).replace("\\", "/"),
+        "split_sizes": {
+            "train": int(train_mask.sum()),
+            "validation": int(val_mask.sum()),
+            "test": int(test_mask.sum()),
+        },
+        "train_only_fit_check": train_only_check,
+        "new_customer_cold_start_scores": cold_start_scores,
+    }
+    return report_rows, dataset_summary
+
+
+def run_verification(datasets: dict[str, Path], report_path: Path) -> dict[str, object]:
+    alignment_check = verify_feature_dictionary_alignment()
+    forbidden_check = verify_forbidden_columns_blocked()
+
+    all_rows: list[dict[str, object]] = []
+    dataset_summaries: dict[str, object] = {}
+
+    for name, path in datasets.items():
+        rows, summary = verify_dataset(name, path)
+        all_rows.extend(rows)
+        dataset_summaries[name] = summary
+
+    report_df = pd.DataFrame(all_rows)
     report_path.parent.mkdir(parents=True, exist_ok=True)
     report_df.to_csv(report_path, index=False, lineterminator="\n")
 
     return {
-        "source": source_label,
-        "feature_sets": {k: list(v) for k, v in FEATURE_SETS.items()},
-        "split_sizes": {
-            "train": int(len(train_df)),
-            "val": int(len(val_df)),
-            "test": int(len(test_df)),
-        },
+        "feature_dictionary_alignment": alignment_check,
         "forbidden_column_check": forbidden_check,
-        "train_only_fit_check": leakage_check,
-        "new_customer_cold_start_scores": cold_start_scores,
+        "feature_sets": {k: list(v) for k, v in FEATURE_SETS.items()},
+        "datasets": dataset_summaries,
         "report_rows": int(len(report_df)),
         "report_path": str(report_path).replace("\\", "/"),
     }
@@ -280,12 +252,6 @@ def run_verification(input_path: Path | None, report_path: Path) -> dict[str, ob
 def main() -> None:
     parser = argparse.ArgumentParser(description="Stage 2.3 preprocessing & leakage verification.")
     parser.add_argument(
-        "--input",
-        type=Path,
-        default=None,
-        help="Optional feature-engineered CSV path. Defaults to synthetic 183-day dataset.",
-    )
-    parser.add_argument(
         "--report",
         type=Path,
         default=DEFAULT_REPORT,
@@ -293,7 +259,7 @@ def main() -> None:
     )
     args = parser.parse_args()
 
-    summary = run_verification(args.input, args.report)
+    summary = run_verification(DEFAULT_DATASETS, args.report)
     print(json.dumps(summary, indent=2, ensure_ascii=False))
 
 

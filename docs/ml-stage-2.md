@@ -1,46 +1,46 @@
 # Quy trình tiền xử lý theo từng mô hình · Chặng 2, mục 2.3 (TV3)
 
-Tài liệu này bàn giao hai danh sách đặc trưng **A** và **A+B**, quy trình tiền xử lý theo từng thuật toán, cơ chế chặn rò rỉ dữ liệu và bằng chứng kiểm tra kích thước / giá trị thiếu trước và sau xử lý.
+Tài liệu này bàn giao hai danh sách đặc trưng **A** và **A+B**, quy trình tiền xử lý theo từng thuật toán, cơ chế chặn rò rỉ dữ liệu và bảng kích thước / giá trị thiếu trước và sau xử lý trên cả hai bộ dữ liệu 183 ngày chính thức (**Handbook** và **Sparkov**).
 
 ## Hai danh sách đặc trưng (Allow-list)
 
-Cài đặt tại [`src/ml/preprocessing.py`](../src/ml/preprocessing.py). Khi TV1 chốt tên cột chính thức ở mục 2.1, chỉ cần truyền tham số `column_mapping` mà không phải sửa logic mô hình.
+Cài đặt tại [`src/ml/preprocessing.py`](../src/ml/preprocessing.py), khớp trực tiếp với `FEATURES_A` và `FEATURES_B` trong [`scripts/transaction_features.py`](../scripts/transaction_features.py).
 
 ### Bộ A (5 đặc trưng)
 
-| Tên cột chuẩn | Ý nghĩa |
+| Tên cột | Ý nghĩa |
 | --- | --- |
-| `log_amount` | Logarit số tiền giao dịch (`log1p(amount)`) |
+| `log_amount` | Logarit tự nhiên của `1 + amount` |
 | `hour_sin`, `hour_cos` | Biểu diễn chu kỳ giờ trong ngày |
 | `dow_sin`, `dow_cos` | Biểu diễn chu kỳ ngày trong tuần |
 
 ### Bộ A+B (10 đặc trưng = Bộ A + 5 đặc trưng lịch sử)
 
-| Tên cột chuẩn | Ý nghĩa |
+| Tên cột | Ý nghĩa |
 | --- | --- |
-| `tx_count_1h` | Số giao dịch của thực thể trong 1 giờ trước |
-| `tx_count_24h` | Số giao dịch của thực thể trong 24 giờ trước |
-| `time_since_last_tx` | Thời gian từ giao dịch gần nhất (`NaN` nếu khách hàng mới) |
-| `amount_to_7d_median` | Tỷ lệ số tiền hiện tại so với trung vị 7 ngày trước (`NaN` nếu thiếu lịch sử 7 ngày) |
-| `missing_history_flag` | Cờ thiếu lịch sử (`1` = thiếu lịch sử, `0` = có lịch sử) |
+| `count_1h` | Số giao dịch của cùng thực thể trong `[t − 1 giờ, t)` |
+| `count_24h` | Số giao dịch của cùng thực thể trong `[t − 24 giờ, t)` |
+| `seconds_since_previous` | Số giây từ giao dịch gần nhất trước `t` (`NaN` nếu chưa có giao dịch trước đó) |
+| `amount_to_median_7d` | Tỷ lệ số tiền hiện tại chia trung vị 7 ngày trước (`NaN` nếu cửa sổ 7 ngày rỗng hoặc trung vị bằng 0) |
+| `missing_history` | Cờ thiếu lịch sử 7 ngày (`1` = rỗng, `0` = có lịch sử) |
 
 ### Chặn rò rỉ cột không phải đặc trưng
 
-Hàm `select_feature_frame()` chỉ chọn đúng danh sách allow-list và hàm `validate_feature_columns()` chặn cứng (báo lỗi `ValueError`) nếu bất kỳ cột nào sau đây xuất hiện trong danh sách đầu vào: `label`, `tx_fraud`, `is_fraud`, `transaction_id`, `entity_id`, `customer_id`, `card_id`, `cc_num`, `terminal_id`, `timestamp`, `tx_datetime`, `dataset`, `date`, `split`, `tx_fraud_scenario`, `fraud_scenario`, `scenario`.
+Hàm `select_feature_frame()` chỉ chọn đúng danh sách allow-list và hàm `validate_feature_columns()` chặn cứng (`ValueError`) nếu bất kỳ cột cấm nào xuất hiện: `label`, `tx_fraud`, `is_fraud`, `transaction_id`, `entity_id`, `customer_id`, `card_id`, `cc_num`, `terminal_id`, `timestamp`, `tx_datetime`, `dataset`, `date`, `split`, `tx_fraud_scenario`, `fraud_scenario`, `scenario`.
 
 ## Quy trình tiền xử lý theo từng mô hình
 
-Mọi phép học tham số (`SimpleImputer`, `StandardScaler`) đều đặt bên trong `scikit-learn Pipeline` và **chỉ `fit` trên tập `train`**.
+Mọi phép học tham số (`SimpleImputer`, `StandardScaler`) đều nằm trong `scikit-learn Pipeline` và **chỉ `fit` trên tập `train`** (90 ngày đầu). Không mở hay tính bất kỳ chỉ số hiệu năng nào trên tập `test`.
 
-| Thuật toán | Đặc trưng liên tục | Cờ nhị phân (`missing_history_flag`) | Lý do |
+| Thuật toán | Đặc trưng liên tục | Cờ nhị phân (`missing_history`) | Lý do |
 | --- | --- | --- | --- |
 | `logistic_regression` | `SimpleImputer(strategy="median")` → `StandardScaler()` | `SimpleImputer(strategy="constant", fill_value=1.0)` (giữ nguyên 0/1) | Mô hình tuyến tính không nhận `NaN` và cần chuẩn hóa thang đo cho điều chuẩn L2 (`C`). |
 | `isolation_forest` | `SimpleImputer(strategy="median")` | `SimpleImputer(strategy="constant", fill_value=1.0)` | Mô hình cây bất biến theo thang đo đơn điệu, chỉ cần điền `NaN` bằng trung vị tập `train`. |
-| `hist_gradient_boosting` | Ép kiểu `float64`, **giữ nguyên `NaN` gốc** | `SimpleImputer(strategy="constant", fill_value=1.0)` | `HistGradientBoostingClassifier` học nhánh rẽ cho giá trị thiếu trực tiếp (native NaN handling). |
+| `hist_gradient_boosting` | Ép kiểu `float64`, **giữ nguyên `NaN` gốc** | `SimpleImputer(strategy="constant", fill_value=1.0)` | `HistGradientBoostingClassifier` học nhánh rẽ trực tiếp cho giá trị thiếu (native NaN handling). |
 
 ## Lệnh chạy kiểm tra tái lập
 
-Chạy từ thư mục gốc của repo (mặc định dùng bộ dữ liệu giả lập 183 ngày chia `90 / 30 / 63`, hoặc truyền `--input <file.csv>` khi có dữ liệu thật từ TV1/TV2):
+Chạy từ thư mục gốc của repo (đọc trực tiếp `data/handbook_183_days.csv.gz` và `data/sparkov_183_days.csv.gz`, gọi `scripts/transaction_features.py::build_features`):
 
 ```powershell
 $stage2Check = Join-Path $env:TEMP "ml-stage2-report-check.csv"
@@ -54,16 +54,29 @@ Dòng cuối phải trả về `True`.
 
 ## Bằng chứng kiểm tra điều kiện đạt (TV4 đối chiếu)
 
-1. **Chỉ học tham số trên `train` (`train_only_fit_verified = true`):** Đã kiểm tra bằng cách thay đổi cực đoan dữ liệu `val` thành `1e9` và xác nhận `imputer.statistics_`, `scaler.mean_`, `scaler.scale_` giữ nguyên tuyệt đối.
-2. **Chặn nhãn, mã định danh và kịch bản gian lận (`all_forbidden_samples_rejected = true`):** Dữ liệu đầu vào thử nghiệm có sẵn `label`, `transaction_id`, `entity_id`, `TX_FRAUD_SCENARIO`, `TERMINAL_ID`; không cột nào lọt vào ma trận đặc trưng và `validate_feature_columns()` từ chối tất cả các cột cấm.
-3. **Khách hàng mới (cold-start) vẫn chấm được điểm hữu hạn:** Giao dịch mới với `tx_count_1h = 0`, `tx_count_24h = 0`, `time_since_last_tx = NaN`, `amount_to_7d_median = NaN`, `missing_history_flag = 1` trả về điểm hữu hạn trên đủ 6 tổ hợp:
-   - `isolation_forest` (A / A+B): `0.080154` / `0.063552`
-   - `logistic_regression` (A / A+B): `0.048995` / `0.012875`
-   - `hist_gradient_boosting` (A / A+B): `0.017536` / `0.994313`
-4. **Bảng kích thước đầu vào và số giá trị thiếu trước/sau xử lý:** Xem đầy đủ 18 dòng tại [`data/samples/ml_stage2_preprocessing_report.csv`](../data/samples/ml_stage2_preprocessing_report.csv). Tóm tắt cho bộ **A+B** (10 đặc trưng):
+1. **Khớp từ điển đặc trưng (`matches_transaction_features_py = true`):** `FEATURE_SET_A == FEATURES_A` và `FEATURE_SET_B_EXTRA == FEATURES_B`.
+2. **Chỉ học tham số trên `train` (`train_only_fit_verified = true` trên cả 2 nguồn):** Thay đổi cực đoan dữ liệu `validation` thành `1e9` và xác nhận `imputer.statistics_`, `scaler.mean_`, `scaler.scale_` không đổi tuyệt đối.
+3. **Chặn nhãn, mã định danh và kịch bản gian lận (`all_forbidden_samples_rejected = true`):** `validate_feature_columns()` từ chối tất cả các cột cấm và chỉ cột trong `FEATURES_A` / `FEATURES_B` đi vào ma trận đầu vào.
+4. **Khách hàng mới (cold-start) chấm được điểm hữu hạn trên cả 2 nguồn:** Giao dịch mới với `count_1h = 0`, `count_24h = 0`, `seconds_since_previous = NaN`, `amount_to_median_7d = NaN`, `missing_history = 1` trả về điểm hữu hạn trên đủ 6 tổ hợp:
+   - **Handbook:**
+     - `isolation_forest` (A / A+B): `0.023238` / `0.050009`
+     - `logistic_regression` (A / A+B): `0.018321` / `0.012346`
+     - `hist_gradient_boosting` (A / A+B): `0.007663` / `0.000516`
+   - **Sparkov:**
+     - `isolation_forest` (A / A+B): `0.029852` / `0.044008`
+     - `logistic_regression` (A / A+B): `0.000986` / `0.000617`
+     - `hist_gradient_boosting` (A / A+B): `0.000457` / `0.000212`
+5. **Bảng kích thước đầu vào và số giá trị thiếu trước/sau xử lý:** Xem đầy đủ 36 dòng tại [`data/samples/ml_stage2_preprocessing_report.csv`](../data/samples/ml_stage2_preprocessing_report.csv).
+   - Với **Bộ A** (5 đặc trưng): cả Handbook và Sparkov có `0` giá trị thiếu trước và sau xử lý trên cả 3 tập (`5 → 5` cột).
+   - Với **Bộ A+B** (10 đặc trưng, `10 → 10` cột, không phát sinh `inf`):
 
-| Thuật toán | Tập | Số dòng | Số cột vào / ra | Thiếu trước xử lý | Thiếu sau xử lý | Điểm hữu hạn |
-| --- | --- | ---: | :---: | ---: | ---: | :---: |
-| `isolation_forest` | train / val / test | 1.080 / 360 / 756 | 10 / 10 | 234 / 86 / 208 | 0 / 0 / 0 | Đạt |
-| `logistic_regression` | train / val / test | 1.080 / 360 / 756 | 10 / 10 | 234 / 86 / 208 | 0 / 0 / 0 | Đạt |
-| `hist_gradient_boosting` | train / val / test | 1.080 / 360 / 756 | 10 / 10 | 234 / 86 / 208 | 234 / 86 / 208 (native NaN) | Đạt |
+| Nguồn | Thuật toán | Số dòng (`train` / `validation` / `test`) | Thiếu trước xử lý | Thiếu sau xử lý |
+| --- | --- | --- | --- | --- |
+| `handbook` | `isolation_forest` | 863.006 / 287.364 / 603.785 | 12.030 / 769 / 1.716 | 0 / 0 / 0 |
+| `handbook` | `logistic_regression` | 863.006 / 287.364 / 603.785 | 12.030 / 769 / 1.716 | 0 / 0 / 0 |
+| `handbook` | `hist_gradient_boosting` | 863.006 / 287.364 / 603.785 | 12.030 / 769 / 1.716 | 12.030 / 769 / 1.716 (native NaN) |
+| `sparkov` | `isolation_forest` | 174.016 / 66.638 / 164.600 | 1.947 / 20 / 17 | 0 / 0 / 0 |
+| `sparkov` | `logistic_regression` | 174.016 / 66.638 / 164.600 | 1.947 / 20 / 17 | 0 / 0 / 0 |
+| `sparkov` | `hist_gradient_boosting` | 174.016 / 66.638 / 164.600 | 1.947 / 20 / 17 | 1.947 / 20 / 17 (native NaN) |
+
+*(Trên Sparkov, tổng số giá trị thiếu trước xử lý `1.947 + 20 + 17 = 1.984` khớp chính xác với báo cáo mục 2.2: `936` dòng thiếu `seconds_since_previous` + `1.048` dòng thiếu `amount_to_median_7d`.)*
