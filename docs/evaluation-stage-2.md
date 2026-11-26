@@ -1,6 +1,6 @@
 # Đánh giá cảnh báo theo ngày · Mục 2.4 (TV4)
 
-[Script đánh giá](../scripts/evaluate_alerts.py) nhận CSV gồm `dataset`, `transaction_id`, `timestamp`, `label` và `risk_score`. Có thể dùng `--score-column amount` để chạy đối chứng theo số tiền. Nếu CSV điểm có cột `algorithm`, chương trình tính riêng cho từng mô hình trong từng nguồn. Mỗi nguồn và mô hình có một dòng điểm cho mỗi giao dịch. Khi thử nhiều cấu hình hoặc bộ đặc trưng của một mô hình, chạy riêng từng cấu hình trên cùng tập giao dịch.
+[Script đánh giá](../scripts/evaluate_alerts_stage2.py) nhận CSV gồm `dataset`, `transaction_id`, `timestamp`, `label` và `risk_score`. Có thể dùng `--score-column amount` để chạy đối chứng theo số tiền. Nếu CSV điểm có cột `algorithm`, chương trình tính riêng cho từng mô hình trong từng nguồn. Mỗi nguồn và mô hình có một dòng điểm cho mỗi giao dịch. Khi thử nhiều cấu hình hoặc bộ đặc trưng của một mô hình, chạy riêng từng cấu hình trên cùng tập giao dịch.
 
 ## Cách tính
 
@@ -16,7 +16,7 @@ Chạy từ thư mục gốc bằng Python 3. [CSV tính tay](../data/samples/ev
 
 ```powershell
 $metricsCheck = Join-Path $env:TEMP "evaluation-stage2-check.csv"
-python scripts/evaluate_alerts.py data/samples/evaluation_stage2_example.csv $metricsCheck
+python scripts/evaluate_alerts_stage2.py data/samples/evaluation_stage2_example.csv $metricsCheck
 Import-Csv $metricsCheck | Where-Object scope -eq 'period' | Format-Table k, alerts, true_positives, precision, recall
 ```
 
