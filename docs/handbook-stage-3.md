@@ -101,3 +101,7 @@ Chạy từ thư mục gốc repo sau khi cài thư viện trong `requirements.t
 $handbookCheck = Join-Path $env:TEMP 'handbook-stage3-check.md'
 python scripts/analyze_handbook_stage3.py $handbookCheck
 ```
+
+## Đối chiếu độc lập của TV2
+
+Đã chạy lại script và xác nhận báo cáo khớp bản bàn giao sau khi chuẩn hóa ký tự xuống dòng. Từ bảng Handbook Stage 2, đối chiếu toàn bộ 35 dòng lịch sử của ba ví dụ theo mã giao dịch, khách hàng, thời điểm, số tiền và tập. Tính riêng trung vị bằng số thập phân và đếm các giao dịch trong cửa sổ 24 giờ, kết quả khớp cả ba ca. Mã `863216` có 1 giao dịch trong 24 giờ và trung vị 33,730. Mã `863677` có 8 giao dịch và trung vị 105,560. Mã `863087` có 0 giao dịch và trung vị 15,235, với tỷ lệ số tiền 6,993764.
