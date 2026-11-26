@@ -24,7 +24,7 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 4.4 | Chốt quy trình đánh giá và mẫu bảng 14 dòng | TV4 | Ngày 14 | [Mẫu 14 dòng và quy trình đánh giá](evaluation-stage-4.md) | [Định nghĩa chỉ số và checklist trước khi chấm test](evaluation-stage-4.md#danh-sách-kiểm-tra-trước-khi-chấm-test) | TV3 | Đạt |
 | 5.1 | Phân tích kết quả và ca điển hình trên Handbook | TV1 | Ngày 17 | — | — | TV2 | Chưa làm |
 | 5.2 | Phân tích kết quả Sparkov và đối chiếu hai nguồn | TV2 | Ngày 17 | — | — | TV1 | Chưa làm |
-| 5.3 | Huấn luyện lại 12 cấu hình và chấm 63 ngày test | TV3 | Ngày 17 | — | — | TV4 | Chưa làm |
+| 5.3 | Huấn luyện lại 12 cấu hình và chấm 63 ngày test | TV3 | Ngày 17 | [Nhật ký 12 lượt và 12 bảng điểm test 63 ngày](ml-stage-5.md) | [Đối chiếu đủ 63 ngày, tập mã giao dịch và script TV4](ml-stage-5.md#nhật-ký-12-lượt-huấn-luyện-và-chấm-điểm-test) | TV4 | Chờ duyệt |
 | 5.4 | Chạy đối chứng, tổng hợp 14 dòng và phân tích ngân sách | TV4 | Ngày 17 | — | — | TV3 | Chưa làm |
 | 6.1 | Viết phần bài toán, dữ liệu và đặc trưng | TV1 | Ngày 21 | — | — | TV2 | Chưa làm |
 | 6.2 | Viết phần phân tích lỗi và giới hạn dữ liệu | TV2 | Ngày 21 | — | — | TV1 | Chưa làm |
