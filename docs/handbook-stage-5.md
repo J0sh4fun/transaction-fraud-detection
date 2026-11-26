@@ -52,3 +52,7 @@ Chạy từ thư mục gốc repo sau khi cài thư viện trong `requirements.t
 $handbookCheck = Join-Path $env:TEMP 'handbook-stage5-check.md'
 python scripts/analyze_handbook_stage5.py $handbookCheck
 ```
+
+## Đối chiếu độc lập của TV2
+
+Đã tạo lại báo cáo và xác nhận khớp bản bàn giao sau khi chuẩn hóa xuống dòng. SHA-256 của sáu bảng điểm Handbook khớp nhật ký TV3. Tính lại số ca đúng trong top 50 theo ngày rồi cộng theo chín tuần, cả 54 giá trị của sáu cấu hình đều khớp bảng tuần. Với ba giao dịch `1156201`, `1159877`, `1164474`, đã đối chiếu nhãn và thứ hạng A/A+B bằng quy tắc xếp hạng dùng chung. Số giao dịch trong 1 giờ, 24 giờ, thời gian từ lần trước và tỷ lệ số tiền so với trung vị 7 ngày được tính độc lập từ lịch sử khách hàng và đều khớp.
