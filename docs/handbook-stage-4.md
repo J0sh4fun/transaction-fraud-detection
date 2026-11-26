@@ -58,3 +58,9 @@ if ($LASTEXITCODE -ne 0) { throw 'Kiểm tra Handbook thất bại.' }
 ```
 
 Script kết thúc bằng `All Handbook Stage 4 checks passed.` khi toàn bộ đối chiếu đạt. Kiểm tra dữ liệu gồm cả nhãn test theo nhiệm vụ 4.2. Phép kiểm tra pipeline dùng train và validation. Kết quả này là phiếu kiểm tra dữ liệu và đầu vào mô hình tại phiên bản repo đang bàn giao.
+
+## Kết quả nghiệm thu
+
+Chạy lại script với nguồn đã ghim và đối chiếu thành công **1.754.155 khóa duy nhất**, **14.681 nhãn gian lận** và toàn bộ mã kịch bản trên 183 ngày. Sáu pipeline của ba thuật toán với hai bộ đặc trưng đều dùng đúng danh sách cột. Bộ A trả về 5 cột và A+B trả về 10 cột. Đảo nhãn và chèn cột kịch bản không làm thay đổi đặc trưng.
+
+Đối chiếu độc lập thêm 12 tệp điểm Handbook đã bàn giao ở Chặng 3. Mỗi tệp có đủ **287.364** giao dịch validation, với mã, thời điểm và nhãn khớp bảng chuẩn hóa. Luồng huấn luyện dùng nhãn riêng cho hai mô hình có giám sát và chỉ truyền đặc trưng cho Isolation Forest. Các bảng điểm giữ nhãn để đánh giá.
