@@ -61,3 +61,9 @@ python scripts/analyze_sparkov_stage5.py $tv2Stage5Check
 ```
 
 Đã đối chiếu từng dòng kết quả ngày ở K=50 của cả 12 bảng điểm với `evaluate_alerts_stage2.py`. Ba thứ hạng được kiểm tra độc lập bằng quy tắc xếp hạng dùng chung, và số giao dịch 1 giờ, 24 giờ, thời gian từ lần giao dịch trước cùng tỷ lệ so với trung vị 7 ngày được tính lại từ lịch sử thẻ. Toàn bộ kiểm tra khớp. Ngưỡng cảnh báo được áp dụng riêng từng ngày và kết quả luôn nằm trong giới hạn số cảnh báo cũng như tổng gian lận thực tế.
+
+## Kết quả nghiệm thu
+
+Đã tái lập cả bốn CSV và xác nhận SHA-256 của 12 bảng điểm khớp nhật ký TV3. Tính lại số ca đúng bằng cách lấy 50 điểm cao nhất từng ngày sau khi sắp mã giao dịch, rồi cộng theo tuần. Cả 756 số đếm theo ngày và 54 dòng theo tuần đều khớp. Ba ca Sparkov khớp mã, ngày, nhãn, thứ hạng A/A+B và đặc trưng lịch sử tính từ giao dịch của cùng thẻ.
+
+Tổng ca đúng A+B so với A tăng cho cả ba thuật toán trên Handbook và giảm cho cả ba trên Sparkov với các cấu hình đã khóa. Phần so sánh ghi rõ quy mô giao dịch, số ca gian lận theo ngày và khác biệt cấu hình giữa hai bộ đặc trưng.

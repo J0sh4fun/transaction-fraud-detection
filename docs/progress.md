@@ -22,8 +22,8 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 4.2 | Kiểm tra độc lập dữ liệu và đặc trưng Handbook | TV2 | Ngày 14 | [Phiếu kiểm tra, danh sách cột và lệnh chạy lại](handbook-stage-4.md) | [Kết quả nghiệm thu dữ liệu, đầu vào mô hình và bảng điểm validation](handbook-stage-4.md#kết-quả-nghiệm-thu) | TV1 | Đạt |
 | 4.3 | Chuẩn bị lệnh huấn luyện lại và chấm test | TV3 | Ngày 14 | [Cấu hình khóa, lệnh chạy và nhật ký chạy thử](ml-stage-4.md) | [TV4 chạy lại và đối chiếu 12 bảng điểm](evaluation-stage-4.md#đối-chiếu-chạy-thử-mục-43) | TV4 | Đạt |
 | 4.4 | Chốt quy trình đánh giá và mẫu bảng 14 dòng | TV4 | Ngày 14 | [Mẫu 14 dòng và quy trình đánh giá](evaluation-stage-4.md) | [Định nghĩa chỉ số và checklist trước khi chấm test](evaluation-stage-4.md#danh-sách-kiểm-tra-trước-khi-chấm-test) | TV3 | Đạt |
-| 5.1 | Phân tích kết quả và ca điển hình trên Handbook | TV1 | Ngày 17 | — | — | TV2 | Chưa làm |
-| 5.2 | Phân tích kết quả Sparkov và đối chiếu hai nguồn | TV2 | Ngày 17 | [Bảng 9 tuần, ba ca và so sánh hai nguồn](tv2-stage-5.md) | [Tái tạo và đối chiếu bộ đánh giá TV4](tv2-stage-5.md#chạy-lại-và-kiểm-tra) | TV1 | Chờ duyệt |
+| 5.1 | Phân tích kết quả và ca điển hình trên Handbook | TV1 | Ngày 17 | [Bảng chênh lệch 9 tuần và hướng dẫn tái lập](handbook-stage-5.md) | [Đối chiếu độc lập của TV2](handbook-stage-5.md#đối-chiếu-độc-lập-của-tv2) | TV2 | Đạt |
+| 5.2 | Phân tích kết quả Sparkov và đối chiếu hai nguồn | TV2 | Ngày 17 | [Bảng 9 tuần, ba ca và so sánh hai nguồn](tv2-stage-5.md) | [Nghiệm thu bảng ngày, bảng tuần và ba ca Sparkov](tv2-stage-5.md#kết-quả-nghiệm-thu) | TV1 | Đạt |
 | 5.3 | Huấn luyện lại 12 cấu hình và chấm 63 ngày test | TV3 | Ngày 17 | [Nhật ký 12 lượt và 12 bảng điểm test 63 ngày](ml-stage-5.md) | [Đối chiếu đủ 63 ngày, tập mã giao dịch và script TV4](ml-stage-5.md#nhật-ký-12-lượt-huấn-luyện-và-chấm-điểm-test) | TV4 | Chờ duyệt |
 | 5.4 | Chạy đối chứng, tổng hợp 14 dòng và phân tích ngân sách | TV4 | Ngày 17 | — | — | TV3 | Chưa làm |
 | 6.1 | Viết phần bài toán, dữ liệu và đặc trưng | TV1 | Ngày 21 | — | — | TV2 | Chưa làm |
