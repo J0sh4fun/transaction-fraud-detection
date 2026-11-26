@@ -14,8 +14,8 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 2.2 | Chuẩn hóa Sparkov, kiểm tra dữ liệu và tạo đặc trưng | TV2 | Ngày 7 | [Bảng 183 ngày, thống kê theo ngày và mã](sparkov-stage-2.md) | [Đối chiếu độc lập với dữ liệu gốc và lịch sử thẻ](sparkov-stage-2.md#đối-chiếu-độc-lập-sparkov) | TV1 | Đạt |
 | 2.3 | Xây quy trình tiền xử lý cho từng mô hình | TV3 | Ngày 7 | [Quy trình tiền xử lý và đặc trưng A, A+B](https://github.com/J0sh4fun/transaction-fraud-detection/pull/8) | [Bản bàn giao kiểm tra trên dữ liệu Handbook và Sparkov](https://github.com/J0sh4fun/transaction-fraud-detection/commit/444f8c0) | TV4 | Đạt |
 | 2.4 | Tính và kiểm tra các chỉ số đánh giá theo ngày | TV4 | Ngày 7 | [Script đánh giá và CSV tính tay](evaluation-stage-2.md) | [Đối chiếu các mức K và trường hợp bằng điểm](evaluation-stage-2.md#bằng-chứng-kiểm-tra) | TV3 | Đạt |
-| 3.1 | Kiểm tra đặc trưng lịch sử trên Handbook | TV1 | Ngày 11 | — | — | TV2 | Chưa làm |
-| 3.2 | Phân tích Sparkov và so sánh hai nguồn | TV2 | Ngày 11 | [Bảng so sánh, báo cáo và hướng dẫn chạy lại](tv2-stage-3.md) | [Cách tính và đối chiếu](tv2-stage-3.md#cách-tính-và-đối-chiếu) | TV1 | Chờ duyệt |
+| 3.1 | Kiểm tra đặc trưng lịch sử trên Handbook | TV1 | Ngày 11 | [Phân bố train/validation và lịch sử giao dịch](handbook-stage-3.md) | [Đối chiếu độc lập của TV2](handbook-stage-3.md#đối-chiếu-độc-lập-của-tv2) | TV2 | Đạt |
+| 3.2 | Phân tích Sparkov và so sánh hai nguồn | TV2 | Ngày 11 | [Bảng so sánh, báo cáo và hướng dẫn chạy lại](tv2-stage-3.md) | [Đối chiếu độc lập 240 dòng thống kê](tv2-stage-3.md#đối-chiếu-độc-lập) | TV1 | Đạt |
 | 3.3 | Chạy 24 ứng viên và xuất điểm validation | TV3 | Ngày 11 | — | — | TV4 | Chưa làm |
 | 3.4 | Đánh giá validation và chọn 12 cấu hình | TV4 | Ngày 11 | — | — | TV3 | Chưa làm |
 | 4.1 | Kiểm tra độc lập dữ liệu và đặc trưng Sparkov | TV1 | Ngày 14 | — | — | TV2 | Chưa làm |
