@@ -32,3 +32,7 @@ $regenerated = Get-Content -Raw -LiteralPath $stage3Check
 ```
 
 Dòng cuối trả về `True` khi bảng tạo lại khớp bản bàn giao.
+
+## Đối chiếu độc lập
+
+Đã tạo lại CSV và so khớp với bản bàn giao. Từ hai bảng Chặng 2, tính lại độc lập số giao dịch, số nhãn gian lận, số dòng thiếu lịch sử và số lượt rà soát theo từng ngày. Cờ thiếu lịch sử được kiểm tra bằng lần giao dịch gần nhất có thời điểm nhỏ hơn thời điểm đang xét của cùng khách hàng hoặc thẻ. Cả 240 dòng và các số liệu tổng hợp theo nguồn, tập đều khớp.
