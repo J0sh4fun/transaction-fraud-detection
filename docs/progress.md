@@ -18,7 +18,7 @@ Luồng trạng thái `Chưa làm → Đang làm → Chờ duyệt → Đạt`. 
 | 3.2 | Phân tích Sparkov và so sánh hai nguồn | TV2 | Ngày 11 | [Bảng so sánh, báo cáo và hướng dẫn chạy lại](tv2-stage-3.md) | [Đối chiếu độc lập 240 dòng thống kê](tv2-stage-3.md#đối-chiếu-độc-lập) | TV1 | Đạt |
 | 3.3 | Chạy 24 ứng viên và xuất điểm validation | TV3 | Ngày 11 | [Nhật ký 24 lượt chạy, mã và 24 bảng điểm validation](ml-stage-3.md) | [Tóm tắt 24 lượt chạy và kiểm tra tương thích script TV4](ml-stage-3.md#tóm-tắt-nhật-ký-24-lượt-chạy) | TV4 | Đạt |
 | 3.4 | Đánh giá validation và chọn 12 cấu hình | TV4 | Ngày 11 | [Bảng điểm validation và 12 cấu hình chọn](evaluation-stage-3.md) | [Kết quả K = 50, ứng viên còn lại và quy tắc xử lý hòa](evaluation-stage-3.md#kết-quả-ở-k--50) | TV3 | Đạt |
-| 4.1 | Kiểm tra độc lập dữ liệu và đặc trưng Sparkov | TV1 | Ngày 14 | [Phiếu kiểm tra và lệnh chạy lại](sparkov-stage-4.md) | [Hai ranh giới chia tập](sparkov-stage-4.md#đối-chiếu-hai-ranh-giới), [kiểm tra rò rỉ thời gian](sparkov-stage-4.md#kiểm-tra-rò-rỉ-thời-gian) | TV2 | Chờ duyệt |
+| 4.1 | Kiểm tra độc lập dữ liệu và đặc trưng Sparkov | TV1 | Ngày 14 | [Phiếu kiểm tra và lệnh chạy lại](sparkov-stage-4.md) | [Hai ranh giới chia tập](sparkov-stage-4.md#đối-chiếu-hai-ranh-giới), [kiểm tra rò rỉ thời gian](sparkov-stage-4.md#kiểm-tra-rò-rỉ-thời-gian) | TV2 | Đạt |
 | 4.2 | Kiểm tra độc lập dữ liệu và đặc trưng Handbook | TV2 | Ngày 14 | — | — | TV1 | Chưa làm |
 | 4.3 | Chuẩn bị lệnh huấn luyện lại và chấm test | TV3 | Ngày 14 | — | — | TV4 | Chưa làm |
 | 4.4 | Chốt quy trình đánh giá và mẫu bảng 14 dòng | TV4 | Ngày 14 | — | — | TV3 | Chưa làm |
